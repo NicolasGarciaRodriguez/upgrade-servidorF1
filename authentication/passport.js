@@ -1,16 +1,17 @@
 const passport = require("passport")
-const LocalStrategy = require("passport-local").Strategy;
+const passportLocal = require("passport-local");
 const bcrypt = require("bcrypt")
 
 const User = require("../models/users")
 
+const LocalStrategy = passportLocal.Strategy;
 const saltos = 10
 
 
 passport.use(
     "register",
     new LocalStrategy({
-        emailField: "email",
+        usernameField: "email",
         passwordField: "password",
         passReqToCallback: true,
     },
@@ -23,7 +24,7 @@ passport.use(
             }
             const passwordEncrypt = await bcrypt.hash(password, saltos);
 
-            const newUser = new User({ email: email , password: passwordEncrypt });
+            const newUser = new User({ email: email, password: passwordEncrypt, });
             const saveUser = await newUser.save();
 
             done(null, saveUser)
@@ -38,23 +39,24 @@ passport.use(
 passport.use(
     "login",
     new LocalStrategy({
-        emailField: "email",
+        usernameField: "email",
         passwordField: "password",
         passReqToCallback: true,
     }, 
     async (req, email, password, done) => {
         try{
-            const user = await User.findOne({ email });
-            if (!user) {
-                const error = new Error(`El usuario ya está registrado`)
+            const currentUser = await User.findOne({ email: email });
+            if (!currentUser) {
+                const error = new Error(`Usuario no registrado`)
                 return done(error)
             }
-            const passwordValidation = await bcrypt.compare(password, user.password);
+            const passwordValidation = await bcrypt.compare(password, currentUser.password);
             if (!passwordValidation) {
                 const error = new Error(`Contraseña incorrecta`)
                 return done(error);
             }
-            return done(null, user);
+            currentUser.password = undefined
+            return done(null, currentUser);
         }
         catch(error) {
             done(error)

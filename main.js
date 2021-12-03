@@ -1,17 +1,17 @@
-const express = require("express")
-const passport = require("passport")
-const session = require("express-session")
-const MongoStore = require("connect-mongo")
+const express = require("express");
+const passport = require("passport");
+const session = require("express-session");
+const MongoStore = require("connect-mongo");
  
-const { DB_URL } = require("./db/db")
-require("./authentication/passport")
-const { isAuthenticated } = require("./middlewares/auth.middlewares")
+const { DB_URL } = require("./db/db");
+require("./authentication/passport");
+const { isAuthenticated } = require("./middlewares/auth.middlewares");
 
 
 
-const teamsRouter = require("./routes/teams.router")
-const driversRouter = require("./routes/drivers.route")
-const usersRouter = require("./routes/users.router")
+const teamsRouter = require("./routes/teams.router");
+const driversRouter = require("./routes/drivers.route");
+const usersRouter = require("./routes/users.router");
 const server = express();
 const PORT = 3000;
 
@@ -40,7 +40,7 @@ server.use(passport.session());
 // --------------------------------------------------
 
 server.use("/teams", teamsRouter);
-server.use("/drivers", driversRouter);
+server.use("/drivers",  driversRouter);
 server.use("/users", usersRouter);
 
 server.use("*", (req, res, next) => {
