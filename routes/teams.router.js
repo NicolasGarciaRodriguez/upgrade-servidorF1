@@ -95,4 +95,21 @@ route.put("/:id/drivers", (req, res, next) => {
 });
 
 
+//editar un equipo
+route.put("/:id", (req, res, next) => {
+    const teamId = req.params.id
+    const teamEdited = new Team(req.body)
+    teamEdited._id = teamId
+    Team.findByIdAndUpdate(teamId, teamEdited, { new: true })
+        .then((teamUpdated) => {
+            return res.status(200).json(`Equipo actualizado ${teamUpdated}`)
+        })
+        .catch(error => {
+            next(error)
+        })
+
+})
+
+
+
 module.exports = route
